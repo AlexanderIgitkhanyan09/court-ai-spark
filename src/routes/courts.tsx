@@ -52,88 +52,33 @@ type Court = {
   id: string;
   name: string;
   city: string;
+  district: string;
   type: "Indoor" | "Outdoor";
   price: number;
   rating: number;
   reviews: number;
   image: string;
+  tags: string[];
   slots: string[];
 };
 
 const courts: Court[] = [
-  {
-    id: "c1",
-    name: "Neon Hardwood Arena",
-    city: "Brooklyn",
-    type: "Indoor",
-    price: 42,
-    rating: 4.9,
-    reviews: 218,
-    image: courtIndoor,
-    slots: ["17:00", "18:30", "20:00", "21:30"],
-  },
-  {
-    id: "c2",
-    name: "Skyline Street Court",
-    city: "Queens",
-    type: "Outdoor",
-    price: 18,
-    rating: 4.6,
-    reviews: 143,
-    image: courtOutdoor,
-    slots: ["16:00", "17:30", "19:00"],
-  },
-  {
-    id: "c3",
-    name: "Blue Line Training Lab",
-    city: "Manhattan",
-    type: "Indoor",
-    price: 65,
-    rating: 4.8,
-    reviews: 96,
-    image: courtTraining,
-    slots: ["07:00", "12:00", "18:00", "20:30"],
-  },
-  {
-    id: "c4",
-    name: "Eastside Community Deck",
-    city: "Brooklyn",
-    type: "Outdoor",
-    price: 12,
-    rating: 4.3,
-    reviews: 311,
-    image: courtOutdoor,
-    slots: ["15:00", "16:30", "18:00"],
-  },
-  {
-    id: "c5",
-    name: "Iron Rim Fieldhouse",
-    city: "Queens",
-    type: "Indoor",
-    price: 35,
-    rating: 4.7,
-    reviews: 87,
-    image: courtIndoor,
-    slots: ["09:00", "13:00", "19:30"],
-  },
-  {
-    id: "c6",
-    name: "Sunset Glass Court",
-    city: "Manhattan",
-    type: "Indoor",
-    price: 58,
-    rating: 4.5,
-    reviews: 64,
-    image: courtTraining,
-    slots: ["08:00", "14:00", "21:00"],
-  },
+  { id: "c1", name: "Olimpavan", city: "Yerevan", district: "Davtashen", type: "Indoor", price: 20000, rating: 4.9, reviews: 212, image: courtTraining, tags: ["FIBA court", "Locker rooms", "AI cameras"], slots: ["09:00", "17:00", "19:00", "21:00"] },
+  { id: "c2", name: "Mika Sports Complex", city: "Yerevan", district: "Shengavit", type: "Indoor", price: 18000, rating: 4.8, reviews: 184, image: courtIndoor, tags: ["Arena seating", "Parking", "AI cameras"], slots: ["10:00", "18:00", "20:30"] },
+  { id: "c3", name: "Dinamo Sports Complex", city: "Yerevan", district: "Center", type: "Indoor", price: 15000, rating: 4.6, reviews: 150, image: courtIndoor, tags: ["Hardwood", "Showers"], slots: ["08:00", "16:00", "19:30"] },
+  { id: "c4", name: "Gazprom Armenia Sports Complex", city: "Yerevan", district: "Avan", type: "Indoor", price: 17000, rating: 4.7, reviews: 121, image: courtTraining, tags: ["Gym", "Pool", "Parking"], slots: ["11:00", "17:30", "20:00"] },
+  { id: "c5", name: "Grand Sport Complex", city: "Yerevan", district: "Erebuni", type: "Outdoor", price: 10000, rating: 4.4, reviews: 98, image: courtOutdoor, tags: ["Floodlights", "Street court"], slots: ["15:00", "18:00", "21:00"] },
+  { id: "c6", name: "Gyumri Sports Complex", city: "Shirak", district: "Gyumri", type: "Indoor", price: 12000, rating: 4.5, reviews: 76, image: courtIndoor, tags: ["Hardwood", "Locker rooms"], slots: ["10:00", "16:30", "19:00"] },
+  { id: "c7", name: "Vanadzor Basketball Complex", city: "Lori", district: "Vanadzor", type: "Indoor", price: 11000, rating: 4.5, reviews: 64, image: courtTraining, tags: ["Training hoops", "AI cameras"], slots: ["09:30", "17:00", "20:00"] },
 ];
+
+const fmt = (n: number) => `${n.toLocaleString("en-US")} AMD`;
 
 function Courts() {
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("all");
   const [type, setType] = useState("all");
-  const [maxPrice, setMaxPrice] = useState([70]);
+  const [maxPrice, setMaxPrice] = useState([25000]);
   const [selected, setSelected] = useState<Court | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
 
@@ -143,20 +88,20 @@ function Courts() {
         (c) =>
           (city === "all" || c.city === city) &&
           (type === "all" || c.type === type) &&
-          c.price <= maxPrice[0] &&
-          (c.name + c.city).toLowerCase().includes(query.toLowerCase()),
+          c.price <= (maxPrice[0] ?? 25000) &&
+          (c.name + c.city + c.district).toLowerCase().includes(query.toLowerCase()),
       ),
     [query, city, type, maxPrice],
   );
 
   function openCourt(court: Court) {
     setSelected(court);
-    setSlot(court.slots[0]);
+    setSlot(court.slots[0] ?? null);
   }
 
   function confirm() {
     toast.success(`Booked ${selected?.name} at ${slot}`, {
-      description: `${selected?.city} · $${selected?.price}/hr`,
+      description: `${selected?.city} · ${fmt(selected?.price ?? 0)}/hr`,
     });
     setSelected(null);
   }
@@ -168,7 +113,7 @@ function Courts() {
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <h1 className="font-display text-4xl font-extrabold uppercase">Book a Court</h1>
         <p className="mt-2 text-muted-foreground">
-          {results.length} courts available near you tonight.
+          {results.length} courts available across Armenia tonight.
         </p>
 
         {/* Filters */}
@@ -195,9 +140,9 @@ function Courts() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All locations</SelectItem>
-                <SelectItem value="Brooklyn">Brooklyn</SelectItem>
-                <SelectItem value="Queens">Queens</SelectItem>
-                <SelectItem value="Manhattan">Manhattan</SelectItem>
+                <SelectItem value="Yerevan">Yerevan</SelectItem>
+                <SelectItem value="Shirak">Shirak</SelectItem>
+                <SelectItem value="Lori">Lori</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -217,13 +162,13 @@ function Courts() {
           </div>
 
           <div className="space-y-2">
-            <Label>Max price · ${maxPrice[0]}/hr</Label>
+            <Label>Max price · {fmt(maxPrice[0] ?? 25000)}/hr</Label>
             <Slider
               value={maxPrice}
               onValueChange={setMaxPrice}
-              min={10}
-              max={80}
-              step={1}
+              min={5000}
+              max={25000}
+              step={1000}
               className="pt-3"
             />
           </div>
@@ -246,7 +191,7 @@ function Courts() {
                   <div>
                     <h2 className="font-display text-lg font-bold uppercase">{c.name}</h2>
                     <p className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <MapPin className="size-3.5" /> {c.city}
+                      <MapPin className="size-3.5" /> {c.city} · {c.district}
                     </p>
                   </div>
                   <Badge variant="outline" className="border-primary/40 text-primary">
@@ -259,7 +204,13 @@ function Courts() {
                     <Star className="size-4 fill-current" /> {c.rating}
                     <span className="text-muted-foreground">({c.reviews})</span>
                   </span>
-                  <span className="font-display text-lg font-bold">${c.price}/hr</span>
+                  <span className="font-display text-lg font-bold">{fmt(c.price)}/hr</span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {c.tags.map((t) => (
+                    <Badge key={t} variant="secondary" className="text-[11px]">{t}</Badge>
+                  ))}
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -293,7 +244,7 @@ function Courts() {
           <DialogHeader>
             <DialogTitle className="font-display uppercase">Confirm booking</DialogTitle>
             <DialogDescription>
-              {selected?.name} · {selected?.city} · ${selected?.price}/hr
+              {selected?.name} · {selected?.district}, {selected?.city} · {fmt(selected?.price ?? 0)}/hr
             </DialogDescription>
           </DialogHeader>
 
@@ -317,7 +268,7 @@ function Courts() {
             <div className="rounded-xl border border-border bg-secondary/40 p-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">1 hour + AI tracking</span>
-                <span className="font-semibold">${(selected?.price ?? 0) + 5}.00</span>
+                <span className="font-semibold">{fmt((selected?.price ?? 0) + 2000)}</span>
               </div>
             </div>
           </div>

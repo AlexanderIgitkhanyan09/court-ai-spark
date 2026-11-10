@@ -12,6 +12,9 @@ import {
 } from "recharts";
 
 import { AppSidebar } from "@/components/court-time/app-sidebar";
+import { ArmeniaLeaderboard } from "@/components/court-time/armenia-leaderboard";
+import { ArmeniaMap } from "@/components/court-time/armenia-map";
+import { regions, type RegionId } from "@/lib/armenia";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -72,7 +75,9 @@ function zoneColor(pct: number) {
 }
 
 function Dashboard() {
-  const [active, setActive] = useState<Zone>(zones[8]);
+  const [active, setActive] = useState<Zone>(zones[8]!);
+  const [regionId, setRegionId] = useState<RegionId>("yerevan");
+  const region = regions.find((r) => r.id === regionId)!;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -194,6 +199,33 @@ function Dashboard() {
                   </LineChart>
                 </ResponsiveContainer>
               </div>
+            </CardContent>
+          </Card>
+        </section>
+        <section className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+          <Card className="surface-panel">
+            <CardHeader>
+              <CardTitle className="font-display uppercase">Armenia Regions</CardTitle>
+              <p className="text-sm text-muted-foreground">Hover or tap a marz to view its stats.</p>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[360px]">
+                <ArmeniaMap active={regionId} onSelect={setRegionId} />
+              </div>
+              <div className="mt-4 grid grid-cols-3 gap-3 rounded-xl border border-border bg-secondary/40 p-4 text-center">
+                <div className="col-span-3 font-display text-lg font-bold uppercase text-ember">{region.name}</div>
+                <div><p className="font-display text-xl font-bold">{region.courts}</p><p className="text-xs text-muted-foreground">Courts</p></div>
+                <div><p className="font-display text-xl font-bold">{region.players.toLocaleString("en-US")}</p><p className="text-xs text-muted-foreground">Players</p></div>
+                <div><p className="font-display text-xl font-bold">{region.avgAccuracy}%</p><p className="text-xs text-muted-foreground">Avg accuracy</p></div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="surface-panel">
+            <CardHeader>
+              <CardTitle className="font-display uppercase">Leaderboard</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ArmeniaLeaderboard region={regionId} />
             </CardContent>
           </Card>
         </section>

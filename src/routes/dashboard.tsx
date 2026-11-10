@@ -75,7 +75,7 @@ function zoneColor(pct: number) {
 }
 
 function Dashboard() {
-  const [active, setActive] = useState<Zone>(zones[8]);
+  const [active, setActive] = useState<Zone>(zones[8]!);
   const [regionId, setRegionId] = useState<RegionId>("yerevan");
   const region = regions.find((r) => r.id === regionId)!;
 

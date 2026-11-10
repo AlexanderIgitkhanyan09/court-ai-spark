@@ -88,7 +88,7 @@ function Courts() {
         (c) =>
           (city === "all" || c.city === city) &&
           (type === "all" || c.type === type) &&
-          c.price <= maxPrice[0] &&
+          c.price <= (maxPrice[0] ?? 25000) &&
           (c.name + c.city + c.district).toLowerCase().includes(query.toLowerCase()),
       ),
     [query, city, type, maxPrice],
@@ -96,7 +96,7 @@ function Courts() {
 
   function openCourt(court: Court) {
     setSelected(court);
-    setSlot(court.slots[0]);
+    setSlot(court.slots[0] ?? null);
   }
 
   function confirm() {
@@ -162,7 +162,7 @@ function Courts() {
           </div>
 
           <div className="space-y-2">
-            <Label>Max price · {fmt(maxPrice[0])}/hr</Label>
+            <Label>Max price · {fmt(maxPrice[0] ?? 25000)}/hr</Label>
             <Slider
               value={maxPrice}
               onValueChange={setMaxPrice}

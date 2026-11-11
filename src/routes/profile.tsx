@@ -11,6 +11,8 @@ import { Progress } from "@/components/ui/progress";
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Player Profile — CourtTime" },
       {
         name: "description",

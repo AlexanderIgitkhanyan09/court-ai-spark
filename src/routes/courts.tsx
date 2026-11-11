@@ -32,6 +32,8 @@ import { Slider } from "@/components/ui/slider";
 export const Route = createFileRoute("/courts")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Book a Basketball Court — CourtTime" },
       {
         name: "description",
